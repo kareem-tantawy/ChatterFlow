@@ -1,0 +1,54 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+
+<div class="followers-container">
+  <h2 class="section-title">Following</h2>
+  
+  {% if following %}
+    <div class="followers-list">
+      {% for followed_profile in following %}
+        <div class="follower-card">
+          <a href="{% url 'profile-detail' followed_profile.id %}" class="follower-image-link">
+            <img 
+              src="{{ followed_profile.image.url }}" 
+              alt="{{ followed_profile.user.username }}" 
+              class="follower-img" 
+              onerror="this.onerror=null; this.src='/static/blog/default-avatar.png';"
+            >
+          </a>
+          <div class="follower-info">
+            <a href="{% url 'profile-detail' followed_profile.id %}" class="follower-username">
+              {{ followed_profile.user.username }}
+            </a>
+            {% if followed_profile.bio %}
+              <p class="follower-bio">{{ followed_profile.bio|truncatechars:60 }}</p>
+            {% endif %}
+          </div>
+          <div class='profile-actions'>
+            {% if user.is_authenticated and user.profile != followed_profile %}
+              <button 
+                  class="follow-btn" 
+                  id="follow-button-{{ followed_profile.id }}"
+                  data-profile-id="{{ followed_profile.id }}"
+              >
+                  {% if user.profile in followed_profile.followers.all %}Unfollow{% else %}Follow{% endif %}
+              </button>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="no-followers">
+      <p>No following yet</p>
+    </div>
+  {% endif %}
+  
+  <div class="back-link">
+    <a href="javascript:history.back()" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Back
+    </a>
+  </div>
+</div>
+
+{% endblock content %}
